@@ -1,0 +1,19 @@
+{
+	"name": "url_shortener",
+	"version": "1.0.0",
+	"description": "url chop-shop",
+	"main": "index.js",
+	"scripts": {
+		"test": "test",
+		"start": "nodemon index.js --inspect"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"nodemon": "^2.0.7"
+	},
+	"dependencies": {
+		"express": "^4.17.1",
+		"mongoose": "^5.12.9"
+	}
+}
