@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { nanoid } = require('nanoid');
 const dotenv = require('dotenv');
+const cron = require('node-cron');
 
 const Url = require('./models/url');
 
@@ -9,7 +10,12 @@ dotenv.config();
 
 mongoose.connect(
 	`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.vpj6n.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
-	{ useNewUrlParser: true, useUnifiedTopology: true }
+	{
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+		useCreateIndex: true,
+	}
 );
 
 const db = mongoose.connection;
@@ -31,8 +37,19 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+cron.schedule('*/30 * * * * *', async () => {
+	let currentDate = new Date(Date.now() - 1800000);
+	await Url.deleteMany({ lastVisited: { $lt: currentDate } }, (err, log) => {
+		console.log(err, log);
+	});
+});
+
 const getRecord = async (alias) => {
-	return await Url.findOne({ alias }).exec();
+	return await Url.findOneAndUpdate(
+		{ alias },
+		{ lastVisited: Date.now() },
+		{ new: true }
+	).exec();
 };
 
 const createAlias = () => {
@@ -40,7 +57,8 @@ const createAlias = () => {
 	return alias;
 };
 
-const createRecord = async (url, alias = createAlias()) => {
+const createRecord = async (url, alias) => {
+	if (!alias) alias = createAlias();
 	let record;
 	let foundConflicts = await Url.findOne({ alias }).exec();
 	if (foundConflicts) {
@@ -64,14 +82,17 @@ app.get('/', function (req, res) {
 
 app.get('/:alias', async (req, res) => {
 	try {
-		let url = await getRecord(req.params.alias);
-		if (url) {
-			return res.redirect(301, url.url);
+		let record = await getRecord(req.params.alias);
+		if (record) {
+			// console.log(record);
+			let currentDate = new Date(Date.now());
+			console.log(currentDate - record.lastVisited);
+			return res.redirect(301, record.url);
 		} else {
-			return res.status(400).end();
+			return res.sendStatus(400).end();
 		}
 	} catch (error) {
-		return res.send(500).end();
+		return res.sendStatus(500).end();
 	}
 });
 
@@ -80,12 +101,12 @@ app.post('/', async (req, res) => {
 		try {
 			const { url, alias } = req.body;
 			const record = await createRecord(url, alias);
-			const message = `Here is your short link: <a href="http://localhost:8889/${record.alias}">http://localhost:8887/${record.alias}</a>`;
+			const message = `Here is your short link: <a href="http://localhost:8889/${record.alias}">http://localhost:8889/${record.alias}</a>`;
 			return res.send(message);
 		} catch (error) {
-			return res.status(500).end();
+			return res.sendStatus(500).end();
 		}
 	} else {
-		return res.status(400).end();
+		return res.sendStatus(400).end();
 	}
 });

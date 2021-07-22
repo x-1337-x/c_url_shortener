@@ -14,6 +14,14 @@ const url = new Schema({
 		type: Date,
 		default: Date.now,
 	},
+	lastVisited: {
+		type: Date,
+		default: Date.now,
+		index: true,
+	},
+	sessionId: {
+		type: String,
+	},
 });
 
 module.exports = mongoose.model('url', url);
