@@ -101,18 +101,27 @@ app.get('/', async (req, res) => {
 	console.log(`get / `, req.session);
 	console.log(`get / `, req.sessionID);
 	let userHistory;
+	let linkListHTML;
 	if (req.sessionID) {
 		userHistory = await getAllRecordsByID(req.sessionID);
+		linkListHTML = userHistory.reduce((acc, item) => {
+			return (
+				acc +
+				`<li>${item.url} <br> Shortlink: <a href="http://localhost:${PORT}/${item.alias}">http://localhost:${PORT}/${item.alias}</a></li>`
+			);
+		}, '');
 		console.log(`userHistory: `, userHistory);
+		console.log(`linkListHTML: `, linkListHTML);
 	}
-	const formPage = `<html><head><link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo="></head><body>
+	const homePage = `<html><head><link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo="></head><body>
 	<form action="/" method="post" enctype="application/x-www-form-urlencoded" style="padding: 20px; background: #fff;">
 		<input name="url" placeholder="URL" />
 		<input name="alias" placeholder="Custom Alias" />
 		<button type="submit">Create short URL</button>
 	</form>
+	<ul>${linkListHTML}</ul>
 	</body></html>`;
-	res.send(formPage);
+	res.send(homePage);
 });
 
 app.get('/:alias', async (req, res) => {
