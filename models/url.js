@@ -19,8 +19,10 @@ const url = new Schema({
 		default: Date.now,
 		index: true,
 	},
-	sessionId: {
+	sessionID: {
 		type: String,
+		default: '',
+		index: true,
 	},
 });
 
