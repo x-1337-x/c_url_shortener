@@ -56,8 +56,8 @@ app.use(
 		secret: process.env.SESSION_SECRET,
 		saveUninitialized: true,
 		resave: false,
-		// store: MongoStore.create(),
-		store: new filestore(),
+		store: MongoStore.create(),
+		// store: new filestore(),
 	})
 );
 
