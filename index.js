@@ -149,7 +149,7 @@ app.post('/', async (req, res) => {
 			const { url, alias } = req.body;
 			const { sessionID } = req;
 			const record = await createRecord(url, alias, sessionID);
-			const message = `Here is your short link: <a href="http://localhost:8889/${record.alias}">http://localhost:8889/${record.alias}</a>`;
+			const message = `Here is your short link: <a href="https://pure-castle-39056.herokuapp.com/${record.alias}">https://pure-castle-39056.herokuapp.com/${record.alias}</a>`;
 			return res.send(message);
 		} catch (error) {
 			return res.sendStatus(500).end();
