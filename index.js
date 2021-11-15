@@ -43,7 +43,7 @@ db.once('open', function () {
 
 //TODO maintenance page
 
-const PORT = 8889;
+const PORT = process.env.PORT || 8889;
 
 const app = express();
 
@@ -113,7 +113,7 @@ app.get('/', async (req, res) => {
 		console.log(`userHistory: `, userHistory);
 		console.log(`linkListHTML: `, linkListHTML);
 	}
-	const homePage = `<html><head><link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo="></head><body>
+	const homePage = `<html><head></head><body>
 	<form action="/" method="post" enctype="application/x-www-form-urlencoded" style="padding: 20px; background: #fff;">
 		<input name="url" placeholder="URL" />
 		<input name="alias" placeholder="Custom Alias" />
