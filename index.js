@@ -107,7 +107,7 @@ app.get('/', async (req, res) => {
 		linkListHTML = userHistory.reduce((acc, item) => {
 			return (
 				acc +
-				`<li>${item.url} <br> Shortlink: <a href="http://localhost:${PORT}/${item.alias}">http://localhost:${PORT}/${item.alias}</a></li>`
+				`<li>${item.url} <br> Shortlink: <a href="https://pure-castle-39056.herokuapp.com/${item.alias}">https://pure-castle-39056.herokuapp.com/${item.alias}</a></li>`
 			);
 		}, '');
 		console.log(`userHistory: `, userHistory);
